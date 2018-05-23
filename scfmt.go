@@ -33,7 +33,7 @@ func main() {
 	var ps string
 	fmt.Print("var shellcode string = \"")
 	for i, c := range payar {
-		if i == len(payar)-1 {
+		if i == len(payar) {
 			ps += fmt.Sprintf("x%s", strings.TrimSpace(c))
 		} else {
 			ps += fmt.Sprintf("\\x%s", strings.TrimSpace(c))
