@@ -31,6 +31,7 @@ func main() {
 	}
 
 	var ps string
+	fmt.Printf("// payload length: %d (%#x)\n", len(payar), len(payar))
 	fmt.Print("var shellcode string = \"")
 	for i, c := range payar {
 		if i == len(payar) {
