@@ -21,3 +21,12 @@ Simply pipe your `objdump` to `scfmt`:
 > scfmt -s '\//bin/sh'
 < 0x732f6e69622f2f
 ```
+
+### Convert IP address to int and hex (LE and BE)
+```bash
+> scfmt -i 127.0.0.1
+< IP: 127.0.0.1
+< Int: 2130706433
+< Hex BE: 0x7f000001
+< Hex LE: 0x0100007f
+```

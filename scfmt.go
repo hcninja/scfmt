@@ -7,12 +7,21 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"strconv"
 	"strings"
+)
+
+const (
+	O1 = 1 << 24
+	O2 = 1 << 16
+	O3 = 1 << 8
+	O4 = 1 << 0
 )
 
 func main() {
 	escFlag := flag.Bool("e", false, "Builds the payload from an objdump")
 	slvFlag := flag.String("s", "", "Converts a string in literal 64b hex values in little endian")
+	ipcFlag := flag.String("i", "", "Converts an IP address to an integer")
 	flag.Parse()
 
 	log.SetFlags(0)
@@ -22,6 +31,8 @@ func main() {
 		os.Exit(0)
 	} else if *slvFlag != "" {
 		stringLiteralValue(*slvFlag)
+	} else if *ipcFlag != "" {
+		convIPAddress(*ipcFlag)
 	} else {
 		fmt.Println("Nothing to do…")
 		flag.PrintDefaults()
@@ -87,4 +98,34 @@ func stringLiteralValue(s string) {
 	}
 
 	fmt.Println("")
+}
+
+func convIPAddress(s string) {
+	// (first octet * 256³) + (second octet * 256²) + (third octet * 256) + (fourth octet)
+	// (first octet * 16777216) + (second octet * 65536) + (third octet * 256) + (fourth octet)
+
+	var octets []int
+
+	for _, o := range strings.Split(s, ".") {
+		i, err := strconv.Atoi(o)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		octets = append(octets, i)
+	}
+
+	ipInt := (octets[0] * O1) + (octets[1] * O2) + (octets[2] * O3) + (octets[3] * O4)
+
+	fmt.Printf("IP: %s\n", s)
+	fmt.Printf("Int: %d\n", ipInt)
+	fmt.Printf("Hex BE: 0x%x\n", ipInt)
+
+	be := strconv.FormatInt(int64(ipInt), 16)
+	fmt.Printf("Hex LE: 0x%s%s%s%s\n", be[6:8], be[4:6], be[2:4], be[0:2])
+
+	// var le string
+	// for i := len(be) - 1; i > 0; i -= 2 {
+
+	// }
 }
